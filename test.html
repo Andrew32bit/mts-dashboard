@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Загрузка команды по спринтам</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Шрифт -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #020617;
+      --bg-card-alt: #020617;
+      --border-subtle: rgba(148, 163, 184, 0.2);
+      --accent-1: #6366f1;
+      --accent-2: #22c55e;
+      --accent-3: #0ea5e9;
+      --accent-4: #f97316;
+      --accent-5: #ec4899;
+      --accent-6: #eab308;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --shadow-soft: 0 22px 45px rgba(15, 23, 42, 0.75);
+      --radius-xl: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
+      color: var(--text-main);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 32px 20px 40px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .title-block {
+      flex: 1 1 auto;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top left, #22c55e10, #6366f110);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 1), rgba(15, 23, 42, 0.92));
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.6fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      position: relative;
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at top left, #0b1220, #020617);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(99, 102, 241, 0.16), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(45, 212, 191, 0.12), transparent 55%),
+        radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.10), transparent 55%);
+      opacity: 0.85;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title span.icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #4ade80, #22c55e, #16a34a);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #022c22;
+      box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.6), 0 0 24px rgba(74, 222, 128, 0.7);
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 260px;
+    }
+
+    @media (max-width: 960px) {
+      .chart-wrapper {
+        height: 240px;
+      }
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.85;
+    }
+
+    .legend-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .legend-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+    }
+
+    .kpi-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .kpi {
+      padding: 4px 8px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+
+    .kpi strong {
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="title-block">
+        <div class="title">
+          <span>Нагрузка команды по спринтам</span>
+        </div>
+        <div class="subtitle">
+          Доля времени команды по стримам (операционка, Live, Lakehouse, Odin, рефакторинг телесмотрения, Blender)
+          в разрезе спринтов. Данные фиксированы, дальше можно подвязать загрузку из Jira.
+        </div>
+      </div>
+      <div class="badge">
+        Sprint retrospective · 7 спринтов · HTML Dashboard
+      </div>
+    </header>
+
+    <!-- Первая строка: линия + стэк -->
+    <section class="grid">
+      <!-- Линейный график динамики по стримам -->
+      <article class="card">
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">%</span>
+              Динамика загрузки по стримам
+            </div>
+          </div>
+          <div class="card-subtitle">
+            Линии показывают, как менялась доля каждого стрима от спринта к спринту. Полезно, чтобы увидеть,
+            кто «съедает» фокус команды в динамике.
+          </div>
+
+          <div class="card-meta">
+            <span class="pill">Диапазон: Спринт 1 – Спринт 7</span>
+            <span class="pill">Метрика: % от общего объёма задач</span>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="lineChart"></canvas>
+          </div>
+
+          <div class="legend-badges">
+            <span class="legend-badge">
+              <span class="legend-dot" style="background: var(--accent-1);"></span>
+              Операционная деятельность
+            </span>
+            <span class="legend-badge">
+              <span class="legend-dot" style="background: var(--accent-2);"></span>
+              Live
+            </span>
+            <span class="legend-badge">
+              <span class="legend-dot" style="background: var(--accent-3);"></span>
+              Lakehouse
+            </span>
+            <span class="legend-badge">
+              <span class="legend-dot" style="background: var(--accent-4);"></span>
+              Odin
+            </span>
+            <span class="legend-badge">
+              <span class="legend-dot" style="background: var(--accent-5);"></span>
+              Рефакторинг телесмотрения
+            </span>
+            <span class="legend-badge">
+              <span class="legend-dot" style="background: var(--accent-6);"></span>
+              Blender
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Стековый bar-график по спринтам -->
+      <article class="card">
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">Σ</span>
+              Структура загрузки по спринтам
+            </div>
+          </div>
+          <div class="card-subtitle">
+            Каждый столбец — спринт, цветовая разбивка показывает, как распределился фокус команды
+            внутри спринта. Хорошо видно, где доминировал Live или, например, Lakehouse.
+          </div>
+
+          <div class="card-meta">
+            <span class="pill">Тип: stacked bar</span>
+            <span class="pill">Нормировано до 100% в каждом спринте</span>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="stackedChart"></canvas>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Вторая строка: донат по последнему спринту -->
+    <section class="grid">
+      <article class="card">
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">7</span>
+              Спринт 7 — финальный срез
+            </div>
+          </div>
+          <div class="card-subtitle">
+            Сводка по последнему спринту: какой стрим забрал больше всего внимания, а какие шли фоном.
+          </div>
+
+          <div class="kpi-row">
+            <div class="kpi">
+              Топ-стрим: <strong>Odin</strong> — <strong>34,88%</strong>
+            </div>
+            <div class="kpi">
+              Blender появился в спринте: <strong>7</strong> (4,65%)
+            </div>
+            <div class="kpi">
+              Live: <strong>16,28%</strong>, Lakehouse: <strong>18,60%</strong>
+            </div>
+          </div>
+
+          <div class="chart-wrapper" style="max-width: 360px; margin-top: 12px;">
+            <canvas id="donutChart"></canvas>
+          </div>
+
+          <div class="footer-note">
+            Donut по Спринту 7 можно заменить на любой другой спринт или сделать переключатель, если дальше
+            будешь подтягивать данные автоматически из Jira.
+          </div>
+        </div>
+      </article>
+
+      <!-- Пустышка / описание / TODO-блок -->
+      <article class="card">
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">∞</span>
+              Идеи для следующей итерации
+            </div>
+          </div>
+          <div class="card-subtitle">
+            Когда подключим Jira API, этот дашборд можно сделать полностью автоматическим:
+          </div>
+          <ul class="footer-note">
+            <li>Подтягивать спринты по статусу <strong>closed</strong> с доски.</li>
+            <li>Фильтровать задачи по статусам «Closed / Done / В анализе / В работе».</li>
+            <li>Маппить задачи на стримы по эпикам / компонентам.</li>
+            <li>Пересчитывать проценты и перерисовывать эти же графики без ручного Excel.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    // Глобальные переменные — будут заполнены после fetch
+    let sprintLabels = [];
+    let dataByStream = {};
+  
+    const colors = {
+      "Операционная деятельность": "rgba(99, 102, 241, 1)",
+      "Live": "rgba(34, 197, 94, 1)",
+      "Lakehouse": "rgba(14, 165, 233, 1)",
+      "Odin": "rgba(249, 115, 22, 1)",
+      "Рефакторинг телесмотрения": "rgba(236, 72, 153, 1)",
+      "Blender": "rgba(234, 179, 8, 1)"
+    };
+  
+    async function loadSprintData() {
+      const resp = await fetch("sprint_load.json?_ts=" + Date.now());
+      if (!resp.ok) {
+        throw new Error("Не удалось загрузить sprint_load.json");
+      }
+      return resp.json();
+    }
+  
+    function makeLineDatasets() {
+      return Object.keys(dataByStream).map((stream) => {
+        const base = colors[stream] || "rgba(148, 163, 184, 1)";
+        const bg = base.replace("1)", "0.22)");
+        return {
+          label: stream,
+          data: dataByStream[stream],
+          borderColor: base,
+          backgroundColor: bg,
+          borderWidth: 2.2,
+          tension: 0.35,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          fill: false
+        };
+      });
+    }
+  
+    function makeStackedDatasets() {
+      return Object.keys(dataByStream).map((stream) => {
+        const base = colors[stream] || "rgba(148, 163, 184, 1)";
+        const bg = base.replace("1)", "0.72)");
+        return {
+          label: stream,
+          data: dataByStream[stream],
+          backgroundColor: bg,
+          borderWidth: 0.5,
+          borderColor: "rgba(15,23,42,0.9)",
+          borderSkipped: false
+        };
+      });
+    }
+  
+    function createLineChart() {
+      const ctx = document.getElementById("lineChart").getContext("2d");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: sprintLabels,
+          datasets: makeLineDatasets()
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "nearest",
+            intersect: false
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.98)",
+              borderColor: "rgba(148, 163, 184, 0.7)",
+              borderWidth: 1,
+              padding: 10,
+              titleFont: { family: "Inter", size: 12, weight: "600" },
+              bodyFont: { family: "Inter", size: 11 },
+              callbacks: {
+                label: (ctx) => {
+                  const label = ctx.dataset.label || "";
+                  const value = ctx.parsed.y;
+                  return `${label}: ${value.toFixed(2)}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "rgba(30, 41, 59, 0.7)" },
+              ticks: { color: "#9ca3af", font: { family: "Inter", size: 11 } }
+            },
+            y: {
+              beginAtZero: true,
+              suggestedMax: 70,
+              grid: { color: "rgba(30, 41, 59, 0.9)" },
+              ticks: {
+                color: "#9ca3af",
+                font: { family: "Inter", size: 11 },
+                callback: (value) => value + "%"
+              }
+            }
+          },
+          animation: { duration: 900, easing: "easeOutCubic" }
+        }
+      });
+    }
+  
+    function createStackedChart() {
+      const ctx = document.getElementById("stackedChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: sprintLabels,
+          datasets: makeStackedDatasets()
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                color: "#e5e7eb",
+                font: { family: "Inter", size: 10 }
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.98)",
+              borderColor: "rgba(148, 163, 184, 0.7)",
+              borderWidth: 1,
+              padding: 10,
+              titleFont: { family: "Inter", size: 12, weight: "600" },
+              bodyFont: { family: "Inter", size: 11 },
+              callbacks: {
+                label: (ctx) => {
+                  const label = ctx.dataset.label || "";
+                  const value = ctx.parsed.y;
+                  return `${label}: ${value.toFixed(2)}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { color: "rgba(30, 41, 59, 0.75)" },
+              ticks: { color: "#9ca3af", font: { family: "Inter", size: 11 } }
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              max: 100,
+              grid: { color: "rgba(30, 41, 59, 0.9)" },
+              ticks: {
+                color: "#9ca3af",
+                font: { family: "Inter", size: 11 },
+                callback: (value) => value + "%"
+              }
+            }
+          },
+          animation: { duration: 900, easing: "easeOutCubic" }
+        }
+      });
+    }
+  
+    function createDonutChart() {
+      const ctx = document.getElementById("donutChart").getContext("2d");
+  
+      // Берём данные из последнего спринта в JSON
+      const lastIndex = sprintLabels.length - 1;
+      const labels = Object.keys(dataByStream);
+      const values = labels.map((stream) => dataByStream[stream][lastIndex] || 0);
+  
+      const bgColors = labels.map((stream) =>
+        (colors[stream] || "rgba(148, 163, 184, 1)").replace("1)", "0.9)")
+      );
+  
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels,
+          datasets: [
+            {
+              data: values,
+              backgroundColor: bgColors,
+              borderColor: "rgba(15, 23, 42, 1)",
+              borderWidth: 2,
+              hoverOffset: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                color: "#e5e7eb",
+                font: { family: "Inter", size: 10 }
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.98)",
+              borderColor: "rgba(148, 163, 184, 0.7)",
+              borderWidth: 1,
+              padding: 10,
+              titleFont: { family: "Inter", size: 12, weight: "600" },
+              bodyFont: { family: "Inter", size: 11 },
+              callbacks: {
+                label: (ctx) => {
+                  const label = ctx.label || "";
+                  const value = ctx.parsed;
+                  return `${label}: ${value.toFixed(2)}%`;
+                }
+              }
+            }
+          },
+          cutout: "62%",
+          animation: { duration: 900, easing: "easeOutCubic" }
+        }
+      });
+    }
+  
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const payload = await loadSprintData();
+        sprintLabels = payload.labels;
+        dataByStream = payload.data;
+  
+        createLineChart();
+        createStackedChart();
+        createDonutChart();
+      } catch (e) {
+        console.error("Ошибка инициализации дашборда:", e);
+      }
+    });
+  </script>
+ 
+</body>
+</html>
