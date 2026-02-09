@@ -5,10 +5,7 @@
   <title>Загрузка команды по спринтам</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Шрифт -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -17,21 +14,21 @@
       --bg-card: #020617;
       --bg-card-alt: #020617;
       --border-subtle: rgba(148, 163, 184, 0.2);
+
       --accent-1: #6366f1;
       --accent-2: #22c55e;
       --accent-3: #0ea5e9;
       --accent-4: #f97316;
       --accent-5: #ec4899;
       --accent-6: #eab308;
+
       --text-main: #e5e7eb;
       --text-muted: #9ca3af;
       --shadow-soft: 0 22px 45px rgba(15, 23, 42, 0.75);
       --radius-xl: 22px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -53,12 +50,10 @@
       flex-wrap: wrap;
       gap: 16px;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
-    .title-block {
-      flex: 1 1 auto;
-    }
+    .title-block { flex: 1 1 auto; }
 
     .title {
       font-size: 24px;
@@ -69,25 +64,11 @@
       gap: 10px;
     }
 
-    .title-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top left, #22c55e10, #6366f110);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
     .subtitle {
       margin-top: 8px;
       font-size: 13px;
       color: var(--text-muted);
-      max-width: 560px;
+      max-width: 720px;
     }
 
     .badge {
@@ -106,11 +87,8 @@
       gap: 18px;
       margin-bottom: 18px;
     }
-
     @media (max-width: 960px) {
-      .grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .grid { grid-template-columns: minmax(0, 1fr); }
     }
 
     .card {
@@ -136,10 +114,7 @@
       pointer-events: none;
     }
 
-    .card-inner {
-      position: relative;
-      z-index: 1;
-    }
+    .card-inner { position: relative; z-index: 1; }
 
     .card-header {
       display: flex;
@@ -192,16 +167,12 @@
       background: rgba(15, 23, 42, 0.96);
     }
 
-    .chart-wrapper {
-      position: relative;
-      height: 260px;
-    }
+    .chart-wrapper { position: relative; height: 260px; }
+    @media (max-width: 960px) { .chart-wrapper { height: 240px; } }
 
-    @media (max-width: 960px) {
-      .chart-wrapper {
-        height: 240px;
-      }
-    }
+    /* Новый: крупный график */
+    .chart-wrapper-xl { position: relative; height: 380px; }
+    @media (max-width: 960px) { .chart-wrapper-xl { height: 320px; } }
 
     .footer-note {
       margin-top: 16px;
@@ -229,11 +200,7 @@
       color: var(--text-muted);
     }
 
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-    }
+    .legend-dot { width: 10px; height: 10px; border-radius: 999px; }
 
     .kpi-row {
       display: flex;
@@ -250,12 +217,10 @@
       background: rgba(15, 23, 42, 0.9);
       border: 1px dashed rgba(148, 163, 184, 0.5);
     }
-
-    .kpi strong {
-      color: #e5e7eb;
-    }
+    .kpi strong { color: #e5e7eb; }
   </style>
 </head>
+
 <body>
   <div class="page">
     <header class="header">
@@ -264,14 +229,40 @@
           <span>Нагрузка команды по спринтам</span>
         </div>
         <div class="subtitle">
-          Доля времени команды по стримам (операционка, Live, Lakehouse, Odin, рефакторинг телесмотрения, Blender)
-          в разрезе спринтов. Данные фиксированы, дальше можно подвязать загрузку из Jira.
+          Доля времени команды по стримам в разрезе спринтов. Обновлено до Спринта 13.
+          Дополнительно — агрегация помесячно (1 месяц = 2 спринта по 2 недели).
         </div>
       </div>
       <div class="badge">
-        Sprint retrospective · 7 спринтов · HTML Dashboard
+        Sprint retrospective · 13 спринтов · HTML Dashboard
       </div>
     </header>
+
+    <!-- НОВЫЙ БОЛЬШОЙ ГРАФИК: ПО МЕСЯЦАМ -->
+    <section style="margin-bottom: 18px;">
+      <article class="card">
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">M</span>
+              Загрузка по месяцам команды — Q4 2025 / Q1 2026
+            </div>
+          </div>
+          <div class="card-subtitle">
+            Агрегация: 1 спринт = 2 недели, 1 месяц = 2 спринта (среднее по значениям).
+            Если месяц неполный (например, последний), он считается по фактически имеющимся спринтам.
+          </div>
+
+          <div class="card-meta">
+            <span class="pill">Метрика: средний % от общего объёма задач</span>
+          </div>
+
+          <div class="chart-wrapper-xl">
+            <canvas id="monthlyLineChart"></canvas>
+          </div>
+        </div>
+      </article>
+    </section>
 
     <!-- Первая строка: линия + стэк -->
     <section class="grid">
@@ -285,12 +276,11 @@
             </div>
           </div>
           <div class="card-subtitle">
-            Линии показывают, как менялась доля каждого стрима от спринта к спринту. Полезно, чтобы увидеть,
-            кто «съедает» фокус команды в динамике.
+            Линии показывают, как менялась доля каждого стрима от спринта к спринту.
           </div>
 
           <div class="card-meta">
-            <span class="pill">Диапазон: Спринт 1 – Спринт 7</span>
+            <span class="pill">Диапазон: Спринт 1 – Спринт 13</span>
             <span class="pill">Метрика: % от общего объёма задач</span>
           </div>
 
@@ -299,30 +289,12 @@
           </div>
 
           <div class="legend-badges">
-            <span class="legend-badge">
-              <span class="legend-dot" style="background: var(--accent-1);"></span>
-              Операционная деятельность
-            </span>
-            <span class="legend-badge">
-              <span class="legend-dot" style="background: var(--accent-2);"></span>
-              Live
-            </span>
-            <span class="legend-badge">
-              <span class="legend-dot" style="background: var(--accent-3);"></span>
-              Lakehouse
-            </span>
-            <span class="legend-badge">
-              <span class="legend-dot" style="background: var(--accent-4);"></span>
-              Odin
-            </span>
-            <span class="legend-badge">
-              <span class="legend-dot" style="background: var(--accent-5);"></span>
-              Рефакторинг телесмотрения
-            </span>
-            <span class="legend-badge">
-              <span class="legend-dot" style="background: var(--accent-6);"></span>
-              Blender
-            </span>
+            <span class="legend-badge"><span class="legend-dot" style="background: var(--accent-1);"></span>Операционная деятельность</span>
+            <span class="legend-badge"><span class="legend-dot" style="background: var(--accent-2);"></span>Live</span>
+            <span class="legend-badge"><span class="legend-dot" style="background: var(--accent-3);"></span>Lakehouse</span>
+            <span class="legend-badge"><span class="legend-dot" style="background: var(--accent-4);"></span>Odin</span>
+            <span class="legend-badge"><span class="legend-dot" style="background: var(--accent-5);"></span>Рефакторинг телесмотрения</span>
+            <span class="legend-badge"><span class="legend-dot" style="background: var(--accent-6);"></span>Blender</span>
           </div>
         </div>
       </article>
@@ -337,8 +309,7 @@
             </div>
           </div>
           <div class="card-subtitle">
-            Каждый столбец — спринт, цветовая разбивка показывает, как распределился фокус команды
-            внутри спринта. Хорошо видно, где доминировал Live или, например, Lakehouse.
+            Каждый столбец — спринт, цветовая разбивка показывает распределение фокуса внутри спринта.
           </div>
 
           <div class="card-meta">
@@ -359,38 +330,26 @@
         <div class="card-inner">
           <div class="card-header">
             <div class="card-title">
-              <span class="icon">7</span>
-              Спринт 7 — финальный срез
+              <span class="icon">13</span>
+              Спринт 13 — финальный срез
             </div>
           </div>
           <div class="card-subtitle">
             Сводка по последнему спринту: какой стрим забрал больше всего внимания, а какие шли фоном.
           </div>
 
-          <div class="kpi-row">
-            <div class="kpi">
-              Топ-стрим: <strong>Odin</strong> — <strong>34,88%</strong>
-            </div>
-            <div class="kpi">
-              Blender появился в спринте: <strong>7</strong> (4,65%)
-            </div>
-            <div class="kpi">
-              Live: <strong>16,28%</strong>, Lakehouse: <strong>18,60%</strong>
-            </div>
-          </div>
+          <div id="kpiRow" class="kpi-row"></div>
 
-          <div class="chart-wrapper" style="max-width: 360px; margin-top: 12px;">
+          <div class="chart-wrapper" style="max-width: 420px; height: 280px; margin-top: 12px;">
             <canvas id="donutChart"></canvas>
           </div>
 
           <div class="footer-note">
-            Donut по Спринту 7 можно заменить на любой другой спринт или сделать переключатель, если дальше
-            будешь подтягивать данные автоматически из Jira.
+            Donut строится по последнему спринту из JSON (сейчас это Спринт 13).
           </div>
         </div>
       </article>
 
-      <!-- Пустышка / описание / TODO-блок -->
       <article class="card">
         <div class="card-inner">
           <div class="card-header">
@@ -403,10 +362,10 @@
             Когда подключим Jira API, этот дашборд можно сделать полностью автоматическим:
           </div>
           <ul class="footer-note">
-            <li>Подтягивать спринты по статусу <strong>closed</strong> с доски.</li>
-            <li>Фильтровать задачи по статусам «Closed / Done / В анализе / В работе».</li>
+            <li>Подтягивать закрытые спринты с доски.</li>
+            <li>Фильтровать задачи по статусам «Done / Closed / In Progress».</li>
             <li>Маппить задачи на стримы по эпикам / компонентам.</li>
-            <li>Пересчитывать проценты и перерисовывать эти же графики без ручного Excel.</li>
+            <li>Пересчитывать проценты и перерисовывать графики без ручного Excel.</li>
           </ul>
         </div>
       </article>
@@ -414,10 +373,15 @@
   </div>
 
   <script>
-    // Глобальные переменные — будут заполнены после fetch
     let sprintLabels = [];
     let dataByStream = {};
-  
+
+    // Храним ссылки на инстансы, чтобы не плодить графики при перезагрузке
+    let lineChartInstance = null;
+    let stackedChartInstance = null;
+    let donutChartInstance = null;
+    let monthlyLineChartInstance = null;
+
     const colors = {
       "Операционная деятельность": "rgba(99, 102, 241, 1)",
       "Live": "rgba(34, 197, 94, 1)",
@@ -426,24 +390,27 @@
       "Рефакторинг телесмотрения": "rgba(236, 72, 153, 1)",
       "Blender": "rgba(234, 179, 8, 1)"
     };
-  
+
     async function loadSprintData() {
       const resp = await fetch("sprint_load.json?_ts=" + Date.now());
-      if (!resp.ok) {
-        throw new Error("Не удалось загрузить sprint_load.json");
-      }
+      if (!resp.ok) throw new Error("Не удалось загрузить sprint_load.json");
       return resp.json();
     }
-  
-    function makeLineDatasets() {
-      return Object.keys(dataByStream).map((stream) => {
+
+    function rgbaAlpha(rgba, alpha) {
+      // "rgba(r,g,b,1)" -> "rgba(r,g,b,0.22)"
+      return rgba.replace(/rgba\(([^)]+),\s*1\)/, `rgba($1, ${alpha})`);
+    }
+
+    function makeLineDatasets(labelsOverride, dataOverride) {
+      const streams = Object.keys(dataOverride);
+      return streams.map((stream) => {
         const base = colors[stream] || "rgba(148, 163, 184, 1)";
-        const bg = base.replace("1)", "0.22)");
         return {
           label: stream,
-          data: dataByStream[stream],
+          data: dataOverride[stream],
           borderColor: base,
-          backgroundColor: bg,
+          backgroundColor: rgbaAlpha(base, 0.22),
           borderWidth: 2.2,
           tension: 0.35,
           pointRadius: 3,
@@ -452,79 +419,40 @@
         };
       });
     }
-  
+
     function makeStackedDatasets() {
       return Object.keys(dataByStream).map((stream) => {
         const base = colors[stream] || "rgba(148, 163, 184, 1)";
-        const bg = base.replace("1)", "0.72)");
         return {
           label: stream,
           data: dataByStream[stream],
-          backgroundColor: bg,
+          backgroundColor: rgbaAlpha(base, 0.72),
           borderWidth: 0.5,
           borderColor: "rgba(15,23,42,0.9)",
           borderSkipped: false
         };
       });
     }
-  
+
     function createLineChart() {
       const ctx = document.getElementById("lineChart").getContext("2d");
-      new Chart(ctx, {
+      if (lineChartInstance) lineChartInstance.destroy();
+
+      lineChartInstance = new Chart(ctx, {
         type: "line",
         data: {
           labels: sprintLabels,
-          datasets: makeLineDatasets()
+          datasets: makeLineDatasets(sprintLabels, dataByStream)
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: {
-            mode: "nearest",
-            intersect: false
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: "rgba(15, 23, 42, 0.98)",
-              borderColor: "rgba(148, 163, 184, 0.7)",
-              borderWidth: 1,
-              padding: 10,
-              titleFont: { family: "Inter", size: 12, weight: "600" },
-              bodyFont: { family: "Inter", size: 11 },
-              callbacks: {
-                label: (ctx) => {
-                  const label = ctx.dataset.label || "";
-                  const value = ctx.parsed.y;
-                  return `${label}: ${value.toFixed(2)}%`;
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: "rgba(30, 41, 59, 0.7)" },
-              ticks: { color: "#9ca3af", font: { family: "Inter", size: 11 } }
-            },
-            y: {
-              beginAtZero: true,
-              suggestedMax: 70,
-              grid: { color: "rgba(30, 41, 59, 0.9)" },
-              ticks: {
-                color: "#9ca3af",
-                font: { family: "Inter", size: 11 },
-                callback: (value) => value + "%"
-              }
-            }
-          },
-          animation: { duration: 900, easing: "easeOutCubic" }
-        }
+        options: commonLineOptions({ suggestedMax: 70 })
       });
     }
-  
+
     function createStackedChart() {
       const ctx = document.getElementById("stackedChart").getContext("2d");
-      new Chart(ctx, {
+      if (stackedChartInstance) stackedChartInstance.destroy();
+
+      stackedChartInstance = new Chart(ctx, {
         type: "bar",
         data: {
           labels: sprintLabels,
@@ -533,33 +461,13 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: {
-            mode: "index",
-            intersect: false
-          },
+          interaction: { mode: "index", intersect: false },
           plugins: {
             legend: {
               position: "bottom",
-              labels: {
-                color: "#e5e7eb",
-                font: { family: "Inter", size: 10 }
-              }
+              labels: { color: "#e5e7eb", font: { family: "Inter", size: 10 } }
             },
-            tooltip: {
-              backgroundColor: "rgba(15, 23, 42, 0.98)",
-              borderColor: "rgba(148, 163, 184, 0.7)",
-              borderWidth: 1,
-              padding: 10,
-              titleFont: { family: "Inter", size: 12, weight: "600" },
-              bodyFont: { family: "Inter", size: 11 },
-              callbacks: {
-                label: (ctx) => {
-                  const label = ctx.dataset.label || "";
-                  const value = ctx.parsed.y;
-                  return `${label}: ${value.toFixed(2)}%`;
-                }
-              }
-            }
+            tooltip: tooltipOptions()
           },
           scales: {
             x: {
@@ -583,32 +491,58 @@
         }
       });
     }
-  
+
+    function buildKpiRowForLastSprint() {
+      const lastIndex = sprintLabels.length - 1;
+      const lastSprintName = sprintLabels[lastIndex];
+
+      const entries = Object.keys(dataByStream)
+        .map((stream) => ({ stream, value: Number(dataByStream[stream][lastIndex] || 0) }))
+        .sort((a, b) => b.value - a.value);
+
+      const top = entries[0];
+      const blender = entries.find(x => x.stream === "Blender");
+
+      const kpiRow = document.getElementById("kpiRow");
+      kpiRow.innerHTML = "";
+
+      const k1 = document.createElement("div");
+      k1.className = "kpi";
+      k1.innerHTML = `Топ-стрим: <strong>${top.stream}</strong> — <strong>${top.value.toFixed(2)}%</strong> (${lastSprintName})`;
+
+      const k2 = document.createElement("div");
+      k2.className = "kpi";
+      k2.innerHTML = `Blender: <strong>${(blender ? blender.value : 0).toFixed(2)}%</strong>`;
+
+      const k3 = document.createElement("div");
+      k3.className = "kpi";
+      k3.innerHTML = `Live: <strong>${entries.find(x=>x.stream==="Live").value.toFixed(2)}%</strong>, Lakehouse: <strong>${entries.find(x=>x.stream==="Lakehouse").value.toFixed(2)}%</strong>`;
+
+      kpiRow.appendChild(k1);
+      kpiRow.appendChild(k2);
+      kpiRow.appendChild(k3);
+    }
+
     function createDonutChart() {
       const ctx = document.getElementById("donutChart").getContext("2d");
-  
-      // Берём данные из последнего спринта в JSON
+      if (donutChartInstance) donutChartInstance.destroy();
+
       const lastIndex = sprintLabels.length - 1;
       const labels = Object.keys(dataByStream);
-      const values = labels.map((stream) => dataByStream[stream][lastIndex] || 0);
-  
-      const bgColors = labels.map((stream) =>
-        (colors[stream] || "rgba(148, 163, 184, 1)").replace("1)", "0.9)")
-      );
-  
-      new Chart(ctx, {
+      const values = labels.map((stream) => Number(dataByStream[stream][lastIndex] || 0));
+      const bgColors = labels.map((stream) => rgbaAlpha(colors[stream] || "rgba(148, 163, 184, 1)", 0.9));
+
+      donutChartInstance = new Chart(ctx, {
         type: "doughnut",
         data: {
           labels,
-          datasets: [
-            {
-              data: values,
-              backgroundColor: bgColors,
-              borderColor: "rgba(15, 23, 42, 1)",
-              borderWidth: 2,
-              hoverOffset: 4
-            }
-          ]
+          datasets: [{
+            data: values,
+            backgroundColor: bgColors,
+            borderColor: "rgba(15, 23, 42, 1)",
+            borderWidth: 2,
+            hoverOffset: 4
+          }]
         },
         options: {
           responsive: true,
@@ -616,47 +550,137 @@
           plugins: {
             legend: {
               position: "bottom",
-              labels: {
-                color: "#e5e7eb",
-                font: { family: "Inter", size: 10 }
-              }
+              labels: { color: "#e5e7eb", font: { family: "Inter", size: 10 } }
             },
-            tooltip: {
-              backgroundColor: "rgba(15, 23, 42, 0.98)",
-              borderColor: "rgba(148, 163, 184, 0.7)",
-              borderWidth: 1,
-              padding: 10,
-              titleFont: { family: "Inter", size: 12, weight: "600" },
-              bodyFont: { family: "Inter", size: 11 },
-              callbacks: {
-                label: (ctx) => {
-                  const label = ctx.label || "";
-                  const value = ctx.parsed;
-                  return `${label}: ${value.toFixed(2)}%`;
-                }
-              }
-            }
+            tooltip: donutTooltipOptions()
           },
           cutout: "62%",
           animation: { duration: 900, easing: "easeOutCubic" }
         }
       });
     }
-  
+
+    // ====== Помесячная агрегация ======
+    function buildMonthlyAggregation() {
+      // 1 месяц = 2 спринта, последний может быть неполным
+      const groups = [
+        { label: "Сентябрь", idx: [0, 1] },
+        { label: "Октябрь", idx: [2, 3] },
+        { label: "Ноябрь", idx: [4, 5] },
+        { label: "Декабрь", idx: [6, 7] },
+        { label: "Январь", idx: [8, 9] }
+      ];
+
+      // Обрезаем группы, если данных меньше (на всякий)
+      const maxIdx = sprintLabels.length - 1;
+      const effectiveGroups = groups
+        .map(g => ({ ...g, idx: g.idx.filter(i => i <= maxIdx) }))
+        .filter(g => g.idx.length > 0);
+
+      const monthLabels = effectiveGroups.map(g => g.label);
+
+      const monthlyData = {};
+      for (const stream of Object.keys(dataByStream)) {
+        const arr = dataByStream[stream].map(Number);
+        monthlyData[stream] = effectiveGroups.map(g => {
+          const vals = g.idx.map(i => arr[i]).filter(v => Number.isFinite(v));
+          const sum = vals.reduce((a, b) => a + b, 0);
+          return vals.length ? (sum / vals.length) : 0;
+        });
+      }
+
+      return { monthLabels, monthlyData };
+    }
+
+    function createMonthlyLineChart() {
+      const ctx = document.getElementById("monthlyLineChart").getContext("2d");
+      if (monthlyLineChartInstance) monthlyLineChartInstance.destroy();
+
+      const { monthLabels, monthlyData } = buildMonthlyAggregation();
+
+      monthlyLineChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: monthLabels,
+          datasets: makeLineDatasets(monthLabels, monthlyData)
+        },
+        options: commonLineOptions({ suggestedMax: 60 })
+      });
+    }
+
+    // ====== Общие опции ======
+    function tooltipOptions() {
+      return {
+        backgroundColor: "rgba(15, 23, 42, 0.98)",
+        borderColor: "rgba(148, 163, 184, 0.7)",
+        borderWidth: 1,
+        padding: 10,
+        titleFont: { family: "Inter", size: 12, weight: "600" },
+        bodyFont: { family: "Inter", size: 11 },
+        callbacks: {
+          label: (ctx) => `${ctx.dataset.label || ""}: ${Number(ctx.parsed.y).toFixed(2)}%`
+        }
+      };
+    }
+
+    function donutTooltipOptions() {
+      return {
+        backgroundColor: "rgba(15, 23, 42, 0.98)",
+        borderColor: "rgba(148, 163, 184, 0.7)",
+        borderWidth: 1,
+        padding: 10,
+        titleFont: { family: "Inter", size: 12, weight: "600" },
+        bodyFont: { family: "Inter", size: 11 },
+        callbacks: {
+          label: (ctx) => `${ctx.label || ""}: ${Number(ctx.parsed).toFixed(2)}%`
+        }
+      };
+    }
+
+    function commonLineOptions({ suggestedMax }) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "nearest", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: tooltipOptions()
+        },
+        scales: {
+          x: {
+            grid: { color: "rgba(30, 41, 59, 0.7)" },
+            ticks: { color: "#9ca3af", font: { family: "Inter", size: 11 } }
+          },
+          y: {
+            beginAtZero: true,
+            suggestedMax: suggestedMax,
+            grid: { color: "rgba(30, 41, 59, 0.9)" },
+            ticks: {
+              color: "#9ca3af",
+              font: { family: "Inter", size: 11 },
+              callback: (value) => value + "%"
+            }
+          }
+        },
+        animation: { duration: 900, easing: "easeOutCubic" }
+      };
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         const payload = await loadSprintData();
         sprintLabels = payload.labels;
         dataByStream = payload.data;
-  
+
+        createMonthlyLineChart();
         createLineChart();
         createStackedChart();
+        buildKpiRowForLastSprint();
         createDonutChart();
       } catch (e) {
         console.error("Ошибка инициализации дашборда:", e);
       }
     });
   </script>
- 
 </body>
 </html>
