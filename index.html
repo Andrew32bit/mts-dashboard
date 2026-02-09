@@ -593,20 +593,65 @@
     }
 
     function createMonthlyLineChart() {
-      const ctx = document.getElementById("monthlyLineChart").getContext("2d");
-      if (monthlyLineChartInstance) monthlyLineChartInstance.destroy();
+  const ctx = document.getElementById("monthlyLineChart").getContext("2d");
+  if (monthlyLineChartInstance) monthlyLineChartInstance.destroy();
 
-      const { monthLabels, monthlyData } = buildMonthlyAggregation();
+  const { monthLabels, monthlyData } = buildMonthlyAggregation();
 
-      monthlyLineChartInstance = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: monthLabels,
-          datasets: makeLineDatasets(monthLabels, monthlyData)
+  monthlyLineChartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: monthLabels,
+      datasets: makeLineDatasets(monthLabels, monthlyData)
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "nearest", intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: "bottom",
+          labels: {
+            color: "#e5e7eb",
+            font: {
+              family: "Inter",
+              size: 11,
+              weight: "500"
+            },
+            boxWidth: 14,
+            boxHeight: 6,
+            padding: 14,
+            usePointStyle: true,
+            pointStyle: "line"
+          }
         },
-        options: commonLineOptions({ suggestedMax: 60 })
-      });
+        tooltip: tooltipOptions()
+      },
+      scales: {
+        x: {
+          grid: { color: "rgba(30, 41, 59, 0.7)" },
+          ticks: {
+            color: "#9ca3af",
+            font: { family: "Inter", size: 11 }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          suggestedMax: 60,
+          grid: { color: "rgba(30, 41, 59, 0.9)" },
+          ticks: {
+            color: "#9ca3af",
+            font: { пше: "Inter", size: 11 },
+            callback: (value) => value + "%"
+          }
+        }
+      },
+      animation: { duration: 900, easing: "easeOutCubic" }
     }
+  });
+}
+
 
     // ====== Общие опции ======
     function tooltipOptions() {
